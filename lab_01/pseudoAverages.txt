@@ -1,0 +1,70 @@
+Pseudocode for averages.c
+=========================
+
+BEGIN
+    // Initialize variables
+    SET count = 0
+    SET sum_even = 0
+    SET count_even = 0
+    SET sum_odd = 0
+    SET count_odd = 0
+    SET value = -1  // Initialize to non-zero value
+
+    // Main loop - continue until user enters 0
+    WHILE value != 0 DO
+        INCREMENT count
+
+        // Determine ordinal suffix for the prompt
+        IF count % 100 is 11, 12, or 13 THEN
+            SET suffix = "th"
+        ELSE IF count % 10 == 1 THEN
+            SET suffix = "st"
+        ELSE IF count % 10 == 2 THEN
+            SET suffix = "nd"
+        ELSE IF count % 10 == 3 THEN
+            SET suffix = "rd"
+        ELSE
+            SET suffix = "th"
+        END IF
+
+        // Prompt user for input
+        PRINT "Enter the " + count + suffix + " value: "
+        READ value
+
+        // If value is 0, exit the loop
+        IF value == 0 THEN
+            BREAK
+        END IF
+
+        // Calculate the sum of digits of the absolute value
+        SET digit_sum = 0
+        SET temp = absolute value of value
+        WHILE temp > 0 DO
+            digit_sum = digit_sum + (temp % 10)
+            temp = temp / 10
+        END WHILE
+
+        // Categorize based on whether digit sum is odd or even
+        IF digit_sum % 2 == 0 THEN
+            sum_even = sum_even + value
+            INCREMENT count_even
+        ELSE
+            sum_odd = sum_odd + value
+            INCREMENT count_odd
+        END IF
+    END WHILE
+
+    // Output results
+    IF count_even == 0 AND count_odd == 0 THEN
+        PRINT "There is no average to compute."
+    ELSE
+        IF count_even > 0 THEN
+            avg_even = sum_even / count_even
+            PRINT "Average of input values whose digits sum up to an even number: " + avg_even (formatted to 2 decimal places)
+        END IF
+        IF count_odd > 0 THEN
+            avg_odd = sum_odd / count_odd
+            PRINT "Average of input values whose digits sum up to an odd number: " + avg_odd (formatted to 2 decimal places)
+        END IF
+    END IF
+END

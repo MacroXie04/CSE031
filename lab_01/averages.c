@@ -24,6 +24,7 @@ const char* getOrdinalSuffix(int n)
         case 3: return "rd";
         default: return "th";
     }
+
 }
 
 int main()

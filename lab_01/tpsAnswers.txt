@@ -1,0 +1,29 @@
+TPS Answers for Lab 01
+======================
+
+TPS 1
+-----
+1. TPS partners' names:
+Hongzhe Xie
+Dominic Almgren
+Evan Lei
+
+2. Three online tutorials for Linux/Mac/PowerShell terminal:
+   - https://ubuntu.com/tutorials/command-line-for-beginners
+   - https://www.codecademy.com/learn/learn-the-command-line
+   - https://linuxcommand.org/lc3_learning_the_shell.php
+
+
+TPS 2
+-----
+1. How to open a terminal:
+   - Linux: Press Ctrl+Alt+T, or search for "Terminal" in applications
+   - Mac: Press Cmd+Space and type "Terminal", or find it in Applications > Utilities
+   - Windows: Press Win+R and type "cmd" or "powershell", or search for "Terminal"
+
+
+TPS 3
+-----
+1. Two online references for using GCC:
+   - https://gcc.gnu.org/onlinedocs/
+   - https://www.geeksforgeeks.org/gcc-command-in-linux-with-examples/
