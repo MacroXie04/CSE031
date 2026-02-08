@@ -1,0 +1,92 @@
+name: Project_01 Check
+
+on:
+  push:
+    paths:
+      - 'project_01/**'
+  pull_request:
+    paths:
+      - 'project_01/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install valgrind
+        run: sudo apt-get update && sudo apt-get install -y valgrind
+
+      - name: Compile wordsearch.c
+        working-directory: project_01
+        run: gcc -Wall -Werror -g -o wordsearch wordsearch.c
+
+      # ---- Test Cases ----
+      - name: "Test 1: HelLo in puzzle1.txt (word found)"
+        working-directory: project_01
+        run: |
+          OUTPUT=$(echo "HelLo" | ./wordsearch puzzle1.txt)
+          echo "$OUTPUT"
+          echo "$OUTPUT" | grep -q "Word found!" || { echo "FAIL: expected 'Word found!'"; exit 1; }
+          echo "$OUTPUT" | grep -q "Printing the search path:" || { echo "FAIL: missing search path"; exit 1; }
+
+      - name: "Test 2: bAnANa in puzzle2.txt (backtracking)"
+        working-directory: project_01
+        run: |
+          OUTPUT=$(echo "bAnANa" | ./wordsearch puzzle2.txt)
+          echo "$OUTPUT"
+          echo "$OUTPUT" | grep -q "Word found!" || { echo "FAIL: expected 'Word found!'"; exit 1; }
+
+      - name: "Test 3: deTeR in puzzle3.txt (multiple paths)"
+        working-directory: project_01
+        run: |
+          OUTPUT=$(echo "deTeR" | ./wordsearch puzzle3.txt)
+          echo "$OUTPUT"
+          echo "$OUTPUT" | grep -q "Word found!" || { echo "FAIL: expected 'Word found!'"; exit 1; }
+
+      - name: "Test 4: color in puzzle3.txt (word not found)"
+        working-directory: project_01
+        run: |
+          OUTPUT=$(echo "color" | ./wordsearch puzzle3.txt)
+          echo "$OUTPUT"
+          echo "$OUTPUT" | grep -q "Word not found!" || { echo "FAIL: expected 'Word not found!'"; exit 1; }
+
+      - name: "Test 5: single char search"
+        working-directory: project_01
+        run: |
+          OUTPUT=$(echo "W" | ./wordsearch puzzle1.txt)
+          echo "$OUTPUT"
+          echo "$OUTPUT" | grep -q "Word found!" || { echo "FAIL: expected 'Word found!'"; exit 1; }
+
+      - name: "Test 6: nonexistent word"
+        working-directory: project_01
+        run: |
+          OUTPUT=$(echo "ZZZZZ" | ./wordsearch puzzle1.txt)
+          echo "$OUTPUT"
+          echo "$OUTPUT" | grep -q "Word not found!" || { echo "FAIL: expected 'Word not found!'"; exit 1; }
+
+      # ---- Memory Checks (Valgrind) ----
+      # Note: main() is provided code and does not free block/word,
+      # so we check for "definitely lost" and memory errors only.
+      - name: "Valgrind: HelLo in puzzle1.txt"
+        working-directory: project_01
+        run: |
+          echo "HelLo" | valgrind --leak-check=full --error-exitcode=1 ./wordsearch puzzle1.txt 2>&1 | tee valgrind1.log
+          grep -q "definitely lost: 0 bytes" valgrind1.log || { echo "FAIL: definite memory leak detected"; exit 1; }
+          grep -q "ERROR SUMMARY: 0 errors" valgrind1.log || { echo "FAIL: valgrind errors detected"; exit 1; }
+
+      - name: "Valgrind: bAnANa in puzzle2.txt"
+        working-directory: project_01
+        run: |
+          echo "bAnANa" | valgrind --leak-check=full --error-exitcode=1 ./wordsearch puzzle2.txt 2>&1 | tee valgrind2.log
+          grep -q "definitely lost: 0 bytes" valgrind2.log || { echo "FAIL: definite memory leak detected"; exit 1; }
+          grep -q "ERROR SUMMARY: 0 errors" valgrind2.log || { echo "FAIL: valgrind errors detected"; exit 1; }
+
+      - name: "Valgrind: color in puzzle3.txt (not found path)"
+        working-directory: project_01
+        run: |
+          echo "color" | valgrind --leak-check=full --error-exitcode=1 ./wordsearch puzzle3.txt 2>&1 | tee valgrind3.log
+          grep -q "definitely lost: 0 bytes" valgrind3.log || { echo "FAIL: definite memory leak detected"; exit 1; }
+          grep -q "ERROR SUMMARY: 0 errors" valgrind3.log || { echo "FAIL: valgrind errors detected"; exit 1; }

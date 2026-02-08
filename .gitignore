@@ -20,5 +20,17 @@ cmake-build-*/
 *.dylib
 a.out
 
+# Project binaries (compiled without extension)
+lab_01/averages
+lab_01/main
+lab_01/punishment
+project_01/wordsearch
+
+# Debug symbols
+*.dSYM/
+
+# Valgrind logs
+valgrind*.log
+
 # macOS
 .DS_Store
