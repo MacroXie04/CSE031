@@ -3,10 +3,10 @@ name: Project_01 Check
 on:
   push:
     paths:
-      - 'project_01/**'
+      - '../../project_01'
   pull_request:
     paths:
-      - 'project_01/**'
+      - '../../project_01'
 
 jobs:
   build-and-test:
@@ -69,7 +69,7 @@ jobs:
 
       # ---- Memory Checks (Valgrind) ----
       # Note: main() is provided code and does not free block/word,
-      # so we check for "definitely lost" and memory errors only.
+      # memory error only
       - name: "Valgrind: HelLo in puzzle1.txt"
         working-directory: project_01
         run: |
