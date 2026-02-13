@@ -1,0 +1,39 @@
+Assignment 1
+============
+
+1. Line 25 caused the segmentation fault:
+      scanf("%d", input);
+   The variable "input" is passed by value instead of by address. scanf expects
+   a pointer (address), but "input" is an int value (0), so it tries to write
+   to memory address 0, causing a segmentation fault.
+
+2. Add the address-of operator (&) to fix the line:
+      scanf("%d", &input);
+
+3. The second bug is that "sum" is passed by value to read_values(). The function
+   modifies its local copy of sum, but the original sum in main() remains 0.
+   So the average calculation in main() uses sum = 0, giving an incorrect result.
+
+4. Change the parameter from "double sum" to "double *sum" (pointer to double).
+   Inside read_values, use *sum instead of sum to dereference the pointer.
+   In main(), pass &sum instead of sum when calling read_values.
+
+Assignment 2
+============
+
+1. With "HELLO!" for str1 and "hello!" for str2, the output is:
+      "The result of appending str2 to str1 is HELLO!hello!."
+   Yes, this is expected.
+
+2. With "HI!" for str1 and "hi!" for str2, the output is NOT expected. It prints
+   extra characters from the previous run (e.g., "HI!hi!lo!" or similar garbage).
+   The bug is that the append function does not add a null terminator ('\0') at
+   the end of the appended string. Characters left over from the previous, longer
+   string remain in memory after the new shorter result.
+   Fix: Add s1[s1len + s2len] = '\0'; after the for loop in the append function.
+
+3. With "Hello! How are you?" for str1 and "I am fine, thank you!" for str2,
+   the output is NOT expected. This happens because both str1 and str2 are
+   declared with a fixed size of 10 characters. The input strings exceed this
+   buffer size, causing a buffer overflow that writes beyond the allocated memory.
+   This leads to undefined behavior. We do not need to fix this.

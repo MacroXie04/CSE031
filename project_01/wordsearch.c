@@ -7,8 +7,6 @@
 void printPuzzle(char** arr);
 void searchPuzzle(char** arr, char* word);
 int bSize;
-int charMatch(char a, char b);
-int dfs(char** arr, char* word, int pos, int wordLen, int row, int col, int** path);
 
 // Main function, DO NOT MODIFY
 int main(int argc, char **argv) {
@@ -44,7 +42,7 @@ int main(int argc, char **argv) {
     fclose(fptr);
 
     printf("Enter the word to search: ");
-    scanf("%s", word);
+    scanf("%19s", word);
 
     // Print out original puzzle grid
     printf("\nPrinting puzzle before search:\n");
@@ -52,6 +50,12 @@ int main(int argc, char **argv) {
 
     // Call searchPuzzle to the word in the puzzle
     searchPuzzle(block, word);
+
+    // Free allocated memory
+    for (i = 0; i < bSize; i++)
+        free(*(block + i));
+    free(block);
+    free(word);
 
     return 0;
 }
