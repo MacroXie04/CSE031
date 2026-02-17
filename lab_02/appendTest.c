@@ -19,7 +19,6 @@ char* append(char s1[], char s2[]) {
     for (k = 0; k < s2len; k++) {
         s1[k + s1len] = s2[k];
     }
-    s1[s1len + s2len] = '\0';
     return s1;
 }
 

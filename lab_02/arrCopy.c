@@ -1,5 +1,4 @@
 #include<stdio.h>
-#include<stdlib.h>
 #include<string.h>
 
 int size; // Variable to record size of original array arr
@@ -17,16 +16,7 @@ char *str3 = "Contents of new array containing odd elements from original: ";
  * type. 
  */
 void printArr(int *a, int size, char *prompt){
-	int i;
-	printf("%s", prompt);
-	if (size == 0) {
-		printf("empty");
-	} else {
-		for (i = 0; i < size; i++) {
-			printf("%d ", *(a + i));
-		}
-	}
-	printf("\n");
+	// Your code here
 }
 
 /* 
@@ -35,17 +25,7 @@ void printArr(int *a, int size, char *prompt){
  * type. 
  */
 void arrCopy(){
-	int i;
-	int ei = 0, oi = 0;
-	for (i = 0; i < size; i++) {
-		if (*(arr + i) % 2 == 0) {
-			*(arr_even + ei) = *(arr + i);
-			ei++;
-		} else {
-			*(arr_odd + oi) = *(arr + i);
-			oi++;
-		}
-	}
+	// Your code here
 }
 
 int main(){
@@ -54,22 +34,13 @@ int main(){
     scanf("%d", &size);
 
     // Dynamically allocate memory for arr (of appropriate size)
-    arr = (int *)malloc(size * sizeof(int));
+    // Your code here
 
     // Ask user to input content of arr and compute evenCount and oddCount
-    for (i = 0; i < size; i++) {
-        printf("Enter array element #%d: ", i + 1);
-        scanf("%d", (arr + i));
-        if (*(arr + i) % 2 == 0) {
-            evenCount++;
-        } else {
-            oddCount++;
-        }
-    }
+	// Your code here
 
     // Dynamically allocate memory for arr_even and arr_odd (of appropriate size)
-    arr_even = (int *)malloc(evenCount * sizeof(int));
-    arr_odd = (int *)malloc(oddCount * sizeof(int));
+    // Your code here    
 	
 /*************** YOU MUST NOT MAKE CHANGES BEYOND THIS LINE! ***********/
 	
