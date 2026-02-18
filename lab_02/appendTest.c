@@ -19,6 +19,8 @@ char* append(char s1[], char s2[]) {
     for (k = 0; k < s2len; k++) {
         s1[k + s1len] = s2[k];
     }
+    s1[s1len + s2len] = '\0';
+    // missing string end token
     return s1;
 }
 
@@ -30,6 +32,8 @@ char* append(char s1[], char s2[]) {
 int main() {
     char str1[10]; 
     char str2[10];
+    /* c does not check the memory writing, all cause string write outside the 10 memory limit
+     */
     while (1) {
         printf("str1 = ");
         scanf("%[^\n]%*c", str1); 
