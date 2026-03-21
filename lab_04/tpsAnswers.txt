@@ -1,0 +1,50 @@
+TPS Answers
+
+Hongzhe Xie
+
+TPS 1
+------
+1. The program prints "2" (the hex value of four_ints[0], which is 2).
+
+2. four_ints[0] will no longer be 2. Since four_c points to the same memory as four_ints, writing 'A','B','C','D' (0x41,0x42,0x43,0x44) into four_c overwrites the bytes of four_ints[0]. On a little-endian system, four_ints[0] becomes 0x44434241.
+
+3. Verified: four_ints[0] prints as 44434241.
+
+4. four_ints[1] prints as 2 (unchanged), since four_c only wrote to the first 4 bytes which correspond to four_ints[0].
+
+5.
+   a. Only 1 array was allocated (four_ints with 4 ints = 16 bytes). four_c is just a char pointer, not a new array.
+   b. Yes, four_ints and four_c point to the same memory location. four_c = (char*)four_ints casts the address.
+   c. Verified by printing both pointers - they show the same address.
+
+6. The difference in addresses between consecutive elements of four_ints is 4 bytes, because each int is 4 bytes (sizeof(int) = 4). When you increment an int pointer, it advances by sizeof(int) bytes.
+
+7. (Memory layout, smallest address on right, for four_ints)
+   Address increases -->
+   | four_ints[0] (4 bytes) | four_ints[1] (4 bytes) | four_ints[2] (4 bytes) | four_ints[3] (4 bytes) |
+   Each element holds value 0x00000002 initially; four_ints[0] becomes 0x44434241 after char writes.
+
+8. The difference in addresses between consecutive elements of four_c is 1 byte, because each char is 1 byte (sizeof(char) = 1). When you increment a char pointer, it advances by 1 byte.
+
+9. (Memory layout for four_c, same memory region)
+   | four_c[0]=0x41('A') | four_c[1]=0x42('B') | four_c[2]=0x43('C') | four_c[3]=0x44('D') | four_c[4]...four_c[15] |
+   The first 4 chars overlap with four_ints[0], the next 4 with four_ints[1], etc.
+
+10. When the index of an array is incremented, C advances the memory address by sizeof(element_type) bytes. For int*, incrementing the index moves 4 bytes forward. For char*, it moves 1 byte forward. The same physical memory can be accessed at different granularities depending on the pointer type used.
+
+TPS 2
+------
+1. Line #8: int **arr = (int**)malloc(n * sizeof(int*));
+   This allocates an array of n pointers-to-int on the heap. arr is a double pointer that points to this array of int* pointers. Each pointer will later point to a row of the 2D array.
+
+2. To access the ith value of the array pointed by arr, use *(arr + i). This dereferences the pointer at offset i from arr, giving us the int* that points to the ith row.
+
+3. Use *(*(arr + i) + j) to access arr[i][j] in pointer notation. The code allocates each row with malloc and initializes all elements to 0 using nested loops.
+
+4. We need to pass the size as an argument because the function receives only a pointer (int**), which does not carry information about the dimensions of the array. Without the size, the function wouldn't know how many rows and columns to iterate over.
+
+5. printArray iterates through each row and column using pointer notation *(*(array + i) + j) and prints each element.
+
+6. To make a diagonal matrix, set *(*(arr + i) + i) = i + 1 for each row i.
+
+7. Verified by calling printArray - output shows the correct diagonal matrix.

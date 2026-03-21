@@ -60,14 +60,13 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-// Case insensitive character comparison (no library functions)
+// Case insensitive character comparison
 int charMatch(char a, char b) {
     if (a >= 'A' && a <= 'Z') a = a + 32;
     if (b >= 'A' && b <= 'Z') b = b + 32;
     return a == b;
 }
 
-// DFS backtracking search for word starting at (row, col) at position pos
 int dfs(char** arr, char* word, int pos, int wordLen, int row, int col, int** path) {
     if (pos == wordLen) return 1;
     if (row < 0 || row >= bSize || col < 0 || col >= bSize) return 0;
@@ -139,7 +138,8 @@ void searchPuzzle(char** arr, char* word) {
         printf("Printing the search path:\n");
         for (i = 0; i < bSize; i++) {
             for (j = 0; j < bSize; j++) {
-                printf("%d\t", *(*(path + i) + j));
+                if (j > 0) printf("\t");
+                printf("%d", *(*(path + i) + j));
             }
             printf("\n");
         }

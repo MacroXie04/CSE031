@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LockDown Builtin Santosh Browser</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0e0e12;
+      --surface: #1a1a24;
+      --border: #2a2a3a;
+      --accent: #4285f4;
+      --text: #e8e4df;
+      --text-dim: #8a8690;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tab-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .tab-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      flex-shrink: 0;
+    }
+
+    .tab-bar span {
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      letter-spacing: 1px;
+      color: var(--text);
+    }
+
+    .url-box {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-btn {
+      background: var(--border);
+      color: var(--text-dim);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all .2s;
+    }
+    .nav-btn:hover { background: #3a3a4a; color: var(--text); }
+
+    .frame-wrapper {
+      flex: 1;
+      position: relative;
+      background: #fff;
+    }
+
+    .frame-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      gap: 16px;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .fallback.show { display: flex; }
+
+    .fallback .icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(66,133,244,.15);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+    }
+
+    .fallback h2 { font-size: 16px; color: var(--text); }
+    .fallback p  { font-size: 13px; color: var(--text-dim); max-width: 320px; line-height: 1.6; }
+
+    .fallback a {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 8px 24px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-decoration: none;
+      background: var(--accent);
+      color: #fff;
+      transition: transform .15s;
+    }
+    .fallback a:hover { transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+
+  <div class="tab-bar">
+    <button class="nav-btn" id="btnBack" title="后退">←</button>
+    <button class="nav-btn" id="btnForward" title="前进">→</button>
+    <button class="nav-btn" id="btnRefresh" title="刷新">↻</button>
+    <div class="tab-dot"></div>
+    <span>百度</span>
+    <div class="url-box" id="urlDisplay">https://www.baidu.com</div>
+  </div>
+
+  <div class="frame-wrapper">
+    <!--
+      关键改动：
+      1. sandbox 中移除了 allow-popups —— target="_blank" 链接无法弹出新窗口，
+         浏览器会回退到在当前 iframe 内导航。
+      2. 保留 allow-top-navigation-by-user-activation 以支持必要的页面跳转。
+    -->
+    <iframe
+      src="https://www.baidu.com"
+      id="iframeBaidu"
+      name="baiduFrame"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-top-navigation-by-user-activation"
+      loading="lazy"
+    ></iframe>
+    <div class="fallback" id="fallbackBaidu">
+      <div class="icon">🔍</div>
+      <h2>百度无法在 iframe 中加载</h2>
+      <p>由于安全策略（X-Frame-Options），该网站阻止了嵌入式加载。你可以直接访问：</p>
+      <a href="https://www.baidu.com" target="_blank">打开百度 ↗</a>
+    </div>
+  </div>
+
+<script>
+  const iframe = document.getElementById('iframeBaidu');
+  const fb     = document.getElementById('fallbackBaidu');
+  const urlBox = document.getElementById('urlDisplay');
+
+  // 导航按钮
+  document.getElementById('btnBack').addEventListener('click', () => {
+    try { iframe.contentWindow.history.back(); } catch(e) {}
+  });
+  document.getElementById('btnForward').addEventListener('click', () => {
+    try { iframe.contentWindow.history.forward(); } catch(e) {}
+  });
+  document.getElementById('btnRefresh').addEventListener('click', () => {
+    try { iframe.contentWindow.location.reload(); } catch(e) {
+      iframe.src = iframe.src;
+    }
+  });
+
+  // 同步地址栏
+  iframe.addEventListener('load', () => {
+    try {
+      const loc = iframe.contentWindow.location.href;
+      if (loc && loc !== 'about:blank') urlBox.textContent = loc;
+    } catch(e) {}
+  });
+
+  // 加载失败兜底
+  iframe.addEventListener('error', () => fb.classList.add('show'));
+  setTimeout(() => {
+    try {
+      const doc = iframe.contentDocument;
+      if (doc && doc.body && doc.body.innerHTML === '') fb.classList.add('show');
+    } catch(e) {}
+  }, 6000);
+</script>
+
+</body>
+</html>

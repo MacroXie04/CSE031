@@ -1,0 +1,54 @@
+============================
+TPS 1
+============================
+
+1. Three pools of memory:
+   - Stack: stores local variables and function parameters.
+   - Heap: stores dynamically allocated memory (malloc, calloc, etc.).
+   - Global/Static: stores global variables and static variables.
+
+2. Analysis of mem.c:
+   a. 3 variables are declared: num, ptr, handle.
+
+   b. 2 of them are pointers:
+      - ptr: points to int
+      - handle: points to int* (pointer to pointer, i.e., int **)
+
+   c. All three variables (num, ptr, handle) are local variables declared
+      inside main(), so they are stored on the Stack.
+
+   d. In line 10, ptr = (int *) malloc(2 * sizeof(int));
+      malloc allocates memory on the Heap, so ptr points to the Heap.
+
+3. Pointer arrows:
+   - ptr ---------> Heap memory at 0x...2a0 (contains value 14)
+   - handle ------> Heap memory at 0x...2c0 (contains the address stored in ptr)
+   - *handle -----> same as ptr, points to Heap memory at 0x...2a0 (contains 14)
+
+   So the chain is: handle -> *handle -> **handle = 14
+
+
+============================
+TPS 2
+============================
+
+1. What does NodeStruct.c do?
+   The program creates a Node struct on the Heap using malloc. It then sets
+   the integer member iValue to 5 and the float member fValue to 3.14.
+   The pointer "head" (stored on the Stack) points to this struct on the Heap.
+
+2. Printed addresses (example output from running the program):
+   - Value of head (where it points to):  0x...2a0  (Heap)
+   - Address of head itself:              0x...5f0  (Stack)
+   - Address of head->iValue:             0x...2a0  (offset +0)
+   - Address of head->fValue:             0x...2a4  (offset +4)
+   - Address of head->next:               0x...2a8  (offset +8)
+
+3. Observations:
+   - The members of the struct are stored contiguously (next to each other)
+     in memory on the Heap.
+   - iValue is at offset +0, fValue is at offset +4 (right after the 4-byte int),
+     and next is at offset +8 (right after the 4-byte float).
+   - The value of head (the address it points to) is the SAME as the address
+     of iValue. This means the pointer to a struct points to the address of
+     its first member.

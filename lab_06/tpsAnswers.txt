@@ -1,0 +1,69 @@
+============================
+TPS 1
+============================
+
+Q1: The Text Segment starts at 0x00400000. The Data Segment starts at 0x10010000.
+
+Q2: The "Source" column shows the MIPS assembly language we wrote (including pseudo-instructions like move, subi, li). The "Basic" column shows the true assembly language — every pseudo-instruction is translated into one or more real MIPS instructions. Each Basic instruction corresponds to exactly one 32-bit machine code word.
+
+Q3: Each row of the Data Segment differs by 32 bytes (0x20 in hex) from the next.
+
+Q4: There are 8 columns per address row.
+
+Q5: Address difference = number of columns x 4 bytes per word = 8 x 4 = 32 bytes. Each column holds one word (4 bytes).
+
+Q6: In the .data section, write: m: .word 20
+
+Q7: The value of m is stored at address 0x10010004 (right after n which is at 0x10010000).
+
+Q8: Declare a string: str1: .asciiz "I love CSE31!"
+
+Q9: str1 starts at address 0x10010008. The string "I love CSE31!" has 13 characters + 1 null terminator = 14 bytes, occupying addresses 0x10010008 through 0x10010017 (spanning about 4 word-aligned locations).
+
+Q10: Yes. When the ASCII box is checked, we can see the characters stored byte by byte in memory. Due to little-endian byte ordering, within each word the bytes appear reversed, but the overall sequence matches the string. This agrees with how character arrays are stored.
+
+Q11: To print str1:
+    la $a0, str1     # load address of the string into $a0
+    li $v0, 4        # syscall code 4 = print string
+    syscall
+
+Q12: "la $t3, n" stands for "Load Address." It loads the memory address of the label n into register $t3. After this instruction, $t3 contains 0x10010000 (the address where n is stored), NOT the value 13 itself. We then need "lw $t3, 0($t3)" to load the actual value from that address into $t3.
+
+============================
+TPS 2
+============================
+
+Q1: MIPS follows the RISC (Reduced Instruction Set Computer) design philosophy. Having fewer instructions keeps the hardware simpler and faster. Since all inequality comparisons (<, >, <=, >=) can be implemented using combinations of just slt, beq, and bne, there is no need for separate instructions for each. This reduces hardware complexity while maintaining full functionality.
+
+Q2: Declare variable n set to 25:
+    n: .word 25
+
+Q3: String declarations:
+    str1: .asciiz "Less than\n"
+    str2: .asciiz "Less than or equal to\n"
+    str3: .asciiz "Greater than\n"
+    str4: .asciiz "Greater than or equal to\n"
+
+Q4: To read an integer from the user:
+    li $v0, 5        # syscall code 5 = read integer
+    syscall          # result is stored in $v0
+
+Q5: To check if input < n:
+    slt $t0, $s0, $s1    # $t0 = 1 if input < n
+    bne $t0, $zero, print_less_than   # if $t0 != 0, input is less than n
+    (Then at print_less_than, print str1 using syscall 4)
+
+Q6: To check if input >= n:
+    slt $t0, $s0, $s1    # $t0 = 1 if input < n, 0 if input >= n
+    beq $t0, $zero, print_gte   # if $t0 == 0, input >= n
+    (Then at print_gte, print str4 using syscall 4)
+
+Q7: To check if input > n:
+    slt $t0, $s1, $s0    # $t0 = 1 if n < input, i.e., input > n
+    bne $t0, $zero, print_greater_than
+    (Then at print_greater_than, print str3 using syscall 4)
+
+Q8: To check if input <= n:
+    slt $t0, $s1, $s0    # $t0 = 1 if n < input (meaning input > n)
+    beq $t0, $zero, print_lte   # if $t0 == 0, then input <= n
+    (Then at print_lte, print str2 using syscall 4)

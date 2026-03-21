@@ -37,5 +37,8 @@ project_01/wordsearch
 # Valgrind logs
 valgrind*.log
 
+# MARS (MIPS simulator)
+Mars4_5.jar
+
 # macOS
 .DS_Store

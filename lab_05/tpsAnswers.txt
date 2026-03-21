@@ -1,0 +1,78 @@
+Hongzhe Xie
+
+TPS 1
+======
+
+1. MARS stands for MIPS Assembler and Runtime Simulator.
+
+2. The MARS webpage is at https://courses.missouristate.edu/KenVollmar/MARS/.
+   Download the JAR file from the download page. Java is required to run it.
+
+3. Downloaded and saved MARS Tutorial.pdf and Fibonacci.asm to the Lab_5 folder.
+
+4. Downloaded and saved myFirstExample.s to the Lab_5 folder.
+
+5. Basic MARS Use (using Fibonacci.asm):
+   a. To load an assembly file: File -> Open, then browse to and select the file.
+   b. To assemble (compile) the program: Run -> Assemble (or press F3, or click the
+      wrench+screwdriver icon on the toolbar).
+   c. To run the assembled program: Run -> Go (or press F5, or click the play icon on
+      the toolbar).
+   d. No, you cannot run a program before assembling it. You must assemble first.
+   e. To run the program line by line: Run -> Step (or press F7, or click the single-step
+      icon on the toolbar).
+   f. To run the program again after it has finished: Run -> Reset (or press F12), then
+      Run -> Go (or press F5) again.
+
+6. Loaded, understood, and ran myFirstExample.s. The program loads the value 10 from
+   memory into $t0, adds it to $t1 (set manually by user), stores the result in $s1,
+   and prints the result using a syscall.
+
+
+TPS 2
+======
+
+1. .data - defines the static data segment where you declare variables and constants
+   (e.g., integers, strings).
+   .word - declares a 32-bit (4-byte) integer value in memory.
+   .text - defines the text segment where you write the program instructions (code).
+
+2. Line 10 ("beq $t3, $0, finish") checks if register $t3 equals zero. If $t3 == 0,
+   it branches (jumps) to the label "finish". This is the loop termination condition
+   that checks if we have computed enough Fibonacci numbers.
+
+3. Line 15 ("j fib") is an unconditional jump back to the label "fib", creating the
+   loop that continues computing the next Fibonacci number.
+
+4. To set a breakpoint in MARS: after assembling the program, in the Text Segment
+   display, click the checkbox in the "Bkpt" column next to line 15 (the "j fib"
+   instruction). The checkbox will become checked, indicating a breakpoint is set.
+   Steps:
+   - Assemble the program (F3).
+   - In the Text Segment panel, find the row for line 15.
+   - Click the checkbox in the "Bkpt" column for that row.
+
+5. After the program stops at a breakpoint:
+   - To continue execution: Run -> Go (F5) to resume running until the next breakpoint
+     or program end.
+   - To step through code: Run -> Step (F7) to execute one instruction at a time.
+
+6. Register contents are displayed in the "Registers" pane on the right side of the
+   MARS window. Each register's current value is shown. To modify a register value
+   manually: double-click on the register's value field in the Registers pane, type
+   the new value, and press Enter. (Uncheck Settings -> "Values displayed in
+   hexadecimal" to work in decimal.)
+
+7. The variable n is stored at address 0x10010000 (the first address in the static
+   data segment). To calculate the 13th Fibonacci number: in the Data Segment panel,
+   locate address 0x10010000, change its value from the current value to 13, then
+   reset and run the program. The 13th Fibonacci number is 233.
+
+8. The syscall instruction is used to request a service from the operating system
+   (simulated by MARS). To use it:
+   - Load the service number into $v0.
+   - Load any required arguments into $a0, $a1, etc.
+   - Execute the "syscall" instruction.
+   Line 18-19: $v0 = 1 (print integer service), $a0 = the value to print. syscall
+   prints the integer in $a0.
+   Line 20-21: $v0 = 10 (exit service). syscall terminates the program.

@@ -1,0 +1,72 @@
+TPS 2
+
+1. To compile punishment.c for debugging with LLDB, use the -g flag:
+   gcc -g -o punish punishment.c
+   The -g flag includes debugging symbols in the executable.
+
+2. To load the program into LLDB:
+   lldb punish
+
+3. To run the program inside LLDB:
+   (lldb) run
+
+4. Breakpoints are markers that tell the debugger to pause execution at a specific line.
+   To set a breakpoint at a certain line (e.g., line 8 where the for loop begins):
+   (lldb) b 8
+
+5. To run the program line by line, use the "next" command (or "n" for short):
+   (lldb) n
+   Enter "n" three times to execute the next 3 lines.
+
+6. To see the value of a variable, use the "print" command (or "p" for short):
+   (lldb) p variableName
+   For example: p i, p count, p sentence
+
+7. To let the program finish its run from a breakpoint, use "continue" (or "c"):
+   (lldb) c
+
+8. To exit LLDB:
+   (lldb) quit
+
+
+TPS 3
+
+1. Four variables were declared: x, y, *px, and *py.
+   Two of them are pointers: px and py (both are int pointers).
+
+2. The values of x, y, and arr[0] are undefined (garbage values) because
+   local variables in C are not automatically initialized. They contain
+   whatever data was previously in that memory location.
+
+3. To prevent unexpected values, initialize them:
+   int x = 0, y = 0, *px, *py;
+   int arr[10] = {0};
+   This sets x and y to 0, and all elements of arr to 0.
+
+4. To display the addresses of x and y:
+   printf("Address of x: %p\n", (void *)&x);
+   printf("Address of y: %p\n", (void *)&y);
+
+5. Set px to point to x and py to point to y:
+   px = &x;
+   py = &y;
+   The value of px equals the address of x, and the value of py equals the address of y.
+   Pointers themselves also have addresses (&px and &py), which are different from
+   the addresses they store.
+
+6. To output the contents of arr using arr as a pointer (no [] notation):
+   for (int i = 0; i < 10; i++) {
+       printf("%d ", *(arr + i));
+   }
+   *(arr + i) is equivalent to arr[i].
+
+7. arr points to the address of arr[0]. This can be verified by:
+   printf("arr = %p\n", (void *)arr);
+   printf("&arr[0] = %p\n", (void *)&arr[0]);
+   Both print the same address, confirming that an array name points to the first element.
+
+8. The address of arr (&arr) is the same value as arr itself.
+   This is because arr is not a separate pointer variable with its own storage.
+   &arr represents the address of the entire array, which starts at the same
+   memory location as the first element. However, the types are different:
+   arr is of type int*, while &arr is of type int(*)[10] (pointer to an array of 10 ints).

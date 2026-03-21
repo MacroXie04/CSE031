@@ -1,0 +1,36 @@
+Assignment 1
+
+1. The segmentation fault was caused by line 25: scanf("%d", input);
+   The second scanf is missing the & operator, so it passes the value of input
+   as a memory address instead of passing the address of input.
+
+2. Fix by adding the & operator: scanf("%d", &input);
+
+3. The bug is that sum is passed by value to read_values(). The function modifies
+   a local copy of sum, so the original sum in main() remains 0 after the function returns.
+
+4. Fix by changing the parameter to a pointer:
+   - Change function signature to: int read_values(double *sum)
+   - Inside the function, use *sum instead of sum (e.g., *sum = 0; *sum += input;)
+   - In main(), call: values = read_values(&sum);
+
+
+Assignment 2
+
+1. Input "HELLO!" for str1 and "hello!" for str2.
+   Output: "HELLO!hello!" — this is the expected output.
+
+2. Input "HI!" for str1 and "hi!" for str2.
+   Output is NOT expected. It shows extra characters from the previous run
+   (e.g., "HI!hi!lo!" or similar).
+   The bug is that the append function does not add a null terminator '\0'
+   at the end of the concatenated string. Leftover characters from the
+   previous input remain in memory.
+   Fix: Add s1[s1len + s2len] = '\0'; after the for loop in the append function.
+
+3. Input "Hello! How are you?" for str1 and "I am fine, thank you!" for str2.
+   Output is NOT expected (garbled output or crash).
+   This happens because str1 and str2 are only allocated 10 characters each
+   (char str1[10] and char str2[10]), but the input strings are much longer
+   than 10 characters. This causes a buffer overflow — data is written beyond
+   the allocated memory, corrupting adjacent data.

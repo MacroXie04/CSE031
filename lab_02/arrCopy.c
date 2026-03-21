@@ -14,26 +14,26 @@ char *str2 = "Contents of new array containing even elements from original: ";
 char *str3 = "Contents of new array containing odd elements from original: ";
 
 /*
- * DO NOT change the definition of the printArr function when it comes to 
- * adding/removing/modifying the function parameters, or changing its return 
- * type. 
+ * DO NOT change the definition of the printArr function when it comes to
+ * adding/removing/modifying the function parameters, or changing its return
+ * type.
  */
 void printArr(int *a, int size, char *prompt) {
     printf("%s", prompt);
     if (size == 0) {
-        printf("empty");
+        printf("empty\n");
     } else {
         for (int i = 0; i < size; i++) {
-            printf("%d", *(a + 1));
+            printf("%d ", *(a + i));
         }
         printf("\n");
     }
 }
 
-/* 
- * DO NOT change the definition of the arrCopy function when it comes to 
- * adding/removing/modifying the function parameters, or changing its return 
- * type. 
+/*
+ * DO NOT change the definition of the arrCopy function when it comes to
+ * adding/removing/modifying the function parameters, or changing its return
+ * type.
  */
 void arrCopy() {
     /* copy even number in arr_even
@@ -62,8 +62,8 @@ int main() {
 
     // Ask user to input content of arr and compute evenCount and oddCount
     for (int i = 0; i < size; i++) {
-        printf("Enter array element #%d:", i + 1);
-        scanf("%d", (arr + 1));
+        printf("Enter array element #%d: ", i + 1);
+        scanf("%d", (arr + i));
         if (*(arr + i) % 2 == 0) {
             evenCount++;
         } else {
