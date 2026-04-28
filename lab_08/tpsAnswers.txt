@@ -1,0 +1,177 @@
+Name: Hongzhe Xie
+Course: CSE-031-01
+Lab 08: More Procedures in MIPS
+
+Collaboration: worked individually
+
+===========================================================
+TPS 1
+===========================================================
+
+1. fib.s loaded and reviewed in MARS. It computes the 13th
+   Fibonacci number using $t0/$t1 as the two previous values,
+   $t3 as the loop counter, and $t2 as a scratch register.
+
+2. To make fib.s generic we replace the hard-coded n with a
+   value read from the user at runtime into $t3.
+
+3. Printing the prompt uses syscall 4 (print string). We add a
+   prompt string to the .data segment:
+
+       prompt: .asciiz "Please enter a number: "
+
+   and at the start of main:
+
+       li   $v0, 4
+       la   $a0, prompt
+       syscall
+
+4. To read an integer we use syscall 5 (read integer). The
+   result is returned by the system call in $v0, so we move it
+   into $t3:
+
+       li   $v0, 5
+       syscall
+       move $t3, $v0
+
+5. Since n is no longer a stored variable, we do NOT need the
+   .data declaration for n, and we do NOT need the la/lw
+   instructions that were loading its value. They are commented
+   out in fib.s so they do not interfere with the program.
+
+6. The program was assembled and tested in MARS with several
+   values (0, 1, 5, 13, 20) and produces the same results as
+   the original fib.s for n = 13.
+
+
+===========================================================
+TPS 2
+===========================================================
+
+1. Tracing recursion(5) by hand:
+
+     recursion(5) = recursion(3) + recursion(4)
+     recursion(3) = recursion(1) + recursion(2)
+     recursion(1) = recursion(-1) + recursion(0) = 1 + 3 = 4
+     recursion(2) = recursion(0)  + recursion(1) = 3 + 4 = 7
+     recursion(3) = 4 + 7 = 11
+     recursion(4) = recursion(2) + recursion(3) = 7 + 11 = 18
+     recursion(5) = 11 + 18 = 29
+
+   The C program also prints "Returning 1" each time the
+   m == -1 base case is reached and "Returning 3" each time
+   the m == 0 base case is reached, and finally prints 29.
+   Running recursion.c with input 5 confirms the result: 29.
+
+2. recursion.s is the MIPS version of recursion.c. main prompts
+   the user, reads an integer, places it in $a0, calls
+   recursion, prints the returned value, and exits. The
+   recursion function itself uses a 12-byte stack frame and
+   branches on whether m is -1, 0, or neither.
+
+3. A prompt string "Please enter an integer: " is added to the
+   .data segment and printed with syscall 4 at the start of
+   main.
+
+4. The user's input should be stored in $a0, because $a0 is the
+   argument register used to pass m to recursion. We use
+   syscall 5 to read the integer (it returns the value in $v0),
+   then move $v0 into $a0.
+
+5. By convention the return value is in $v0. However syscall
+   for "print integer" also uses $v0 to select the syscall
+   number, which would overwrite the returned value. The fix
+   is to move the return value from $v0 into $a0 first, and
+   then set $v0 to 1 for the print_int syscall:
+
+       move $a0, $v0
+       li   $v0, 1
+       syscall
+
+6. Inserted the above three instructions (plus a newline print)
+   before j end so the returned value is printed.
+
+7. The frame is 12 bytes = 3 integer words. These three slots
+   will hold $ra, $a0 (m), and the $v0 returned from the first
+   recursive call. The first thing to store is $ra, because the
+   function will use jal (which overwrites $ra) when it
+   recurses:
+
+       sw $ra, 0($sp)
+
+8. Under label recursion we reach the m == -1 base case. The
+   return value must go in $v0:
+
+       li $v0, 1
+
+9. Under label not_minus_one we reach the m == 0 base case,
+   again returning through $v0:
+
+       li $v0, 3
+
+10. Under label not_zero we save $a0 to the stack because $a0
+    is a caller-saved argument register. The code is about to
+    call recursion twice, each time overwriting $a0. We need
+    the original value of m later (to compute m - 1 after the
+    first call), so we preserve it in the stack frame at
+    4($sp).
+
+11. Prepare the first recursive argument (m - 2):
+
+        addi $a0, $a0, -2
+
+12. After the first call returns, $v0 holds recursion(m - 2).
+    If we call recursion again right away, the second call
+    will overwrite $v0 before we can use the first result.
+    We therefore save $v0 into the stack frame first:
+
+        sw $v0, 8($sp)
+
+13. Prepare the second recursive argument (m - 1). We first
+    reload the original m from the stack because $a0 was
+    clobbered by the first call:
+
+        lw   $a0, 4($sp)
+        addi $a0, $a0, -1
+
+14. After the second call, combine the two recursive results
+    (first result is in the stack slot we saved, second is
+    already in $v0) to produce the final return value:
+
+        lw  $t0, 8($sp)
+        add $v0, $v0, $t0
+
+15. Before returning to the caller we must restore $ra from
+    the stack so that jr $ra jumps back to the correct
+    location in main (or the previous recursion call):
+
+        lw $ra, 0($sp)
+
+
+===========================================================
+Individual Assignment 1
+===========================================================
+
+recursion1.s implements recursion1.c in MIPS following full
+register and calling conventions:
+
+  - arguments passed in $a0, return value in $v0
+  - $ra saved at the top of the stack frame, restored before jr
+  - $a0 (m) saved before recursive calls because it is caller-
+    saved and would be overwritten
+  - the result of the first recursive call is saved on the
+    stack before making the second call, because $v0 is also
+    caller-saved
+  - the stack pointer is decremented by 12 bytes on entry and
+    restored by 12 bytes on exit, keeping the stack balanced
+
+Sample outputs verified to match recursion1.c:
+
+    input  0  ->  3   (recursion(-3) + 0 + recursion(-2) = 2 + 0 + 1)
+    input  1  ->  5   (recursion(-2) + 1 + recursion(-1) = 1 + 1 + 3)
+    input  2  ->  8   (recursion(-1) + 2 + recursion(0)  = 3 + 2 + 3)
+    input  3  ->  11  (recursion(0)  + 3 + recursion(1)  = 3 + 3 + 5)
+    input  5  ->  24  (recursion(2)  + 5 + recursion(3)  = 8 + 5 + 11)
+    input -1  ->  3
+    input -2  ->  1
+    input -3  ->  2

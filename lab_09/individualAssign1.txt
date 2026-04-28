@@ -1,0 +1,192 @@
+Name: Hongzhe Xie
+Course: CSE-031-01
+Lab 09: Individual Assignment 1
+
+Collaboration: worked individually
+
+===========================================================
+Conversion in proc2.s
+===========================================================
+
+Text segment starts at 0x00400000. The relevant labels/addresses after basic
+assembly expansion are:
+
+  0x00400000: line #7   addi $s0, $zero, -15
+  0x00400010: line #14  slt  $t0, $s0, $s1
+  0x00400014: line #17  beq  $t0, $zero, LEEQ
+  0x00400018: line #20  j    GRT
+  0x0040001C: label GRT
+  0x00400030: label LEEQ
+
+-----------------------------------------------------------
+Line #7
+-----------------------------------------------------------
+
+MIPS instruction:
+
+  addi $s0, $zero, -15
+
+Instruction format: I-type
+
+Fields:
+
+  opcode    = 0x08   (addi)
+  rs        = $zero  = 0x00
+  rt        = $s0    = 0x10
+  immediate = -15    = 0xFFF1
+
+Machine code construction:
+
+  binary = 001000 00000 10000 1111111111110001
+         = 00100000000100001111111111110001
+
+  hex    = 0x2010FFF1
+
+Convert back from machine code:
+
+  opcode 0x08 means addi.
+  rs 0x00 maps to $zero.
+  rt 0x10 maps to $s0.
+  immediate 0xFFF1 is -15 in signed 16-bit two's complement.
+
+Final decoded MIPS instruction:
+
+  addi $s0, $zero, -15
+
+-----------------------------------------------------------
+Line #14
+-----------------------------------------------------------
+
+MIPS instruction:
+
+  slt $t0, $s0, $s1
+
+Instruction format: R-type
+
+Fields:
+
+  opcode = 0x00
+  rs     = $s0  = 0x10
+  rt     = $s1  = 0x11
+  rd     = $t0  = 0x08
+  shamt  = 0x00
+  funct  = 0x2A   (slt)
+
+Machine code construction:
+
+  binary = 000000 10000 10001 01000 00000 101010
+         = 00000010000100010100000000101010
+
+  hex    = 0x0211402A
+
+Convert back from machine code:
+
+  opcode 0x00 means R-type.
+  funct 0x2A means slt.
+  rs 0x10 maps to $s0.
+  rt 0x11 maps to $s1.
+  rd 0x08 maps to $t0.
+
+Final decoded MIPS instruction:
+
+  slt $t0, $s0, $s1
+
+-----------------------------------------------------------
+Line #17
+-----------------------------------------------------------
+
+MIPS instruction:
+
+  beq $t0, $zero, LEEQ
+
+Instruction format: I-type
+
+Fields:
+
+  opcode = 0x04   (beq)
+  rs     = $t0    = 0x08
+  rt     = $zero  = 0x00
+
+Branch target:
+
+  beq address     = 0x00400014
+  PC + 4          = 0x00400018
+  target label    = LEEQ
+  target address  = 0x00400030
+
+Immediate calculation:
+
+  immediate = (target - (PC + 4)) / 4
+            = (0x00400030 - 0x00400018) / 4
+            = 0x00000018 / 4
+            = 6
+            = 0x0006
+
+Machine code construction:
+
+  binary = 000100 01000 00000 0000000000000110
+         = 00010001000000000000000000000110
+
+  hex    = 0x11000006
+
+Convert back from machine code:
+
+  opcode 0x04 means beq.
+  rs 0x08 maps to $t0.
+  rt 0x00 maps to $zero.
+  immediate 0x0006 means branch 6 instructions after PC + 4:
+
+    target = 0x00400018 + (6 * 4)
+           = 0x00400030
+           = LEEQ
+
+Final decoded MIPS instruction:
+
+  beq $t0, $zero, LEEQ
+
+-----------------------------------------------------------
+Line #20
+-----------------------------------------------------------
+
+MIPS instruction:
+
+  j GRT
+
+Instruction format: J-type
+
+Fields:
+
+  opcode  = 0x02   (j)
+  address = target address shifted right by 2
+
+Jump target:
+
+  target label   = GRT
+  target address = 0x0040001C
+
+Address field calculation:
+
+  address field = 0x0040001C >> 2
+                = 0x00100007
+                = 00000100000000000000000111
+
+Machine code construction:
+
+  binary = 000010 00000100000000000000000111
+         = 00001000000100000000000000000111
+
+  hex    = 0x08100007
+
+Convert back from machine code:
+
+  opcode 0x02 means j.
+  address field 0x00100007 is shifted left by 2:
+
+    0x00100007 << 2 = 0x0040001C
+
+  The upper 4 bits are supplied from PC + 4, so the reconstructed target is
+  0x0040001C, which is label GRT.
+
+Final decoded MIPS instruction:
+
+  j GRT

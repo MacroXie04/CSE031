@@ -1,0 +1,40 @@
+TPS 1
+1. 
+- Procedure: A sequence of instructions that perform a specific task, sometimes without returning a value.
+- Function: A block of code designed to perform a particular task and return a value.
+- Method: A function associated with an object or class in object-oriented programming.
+
+2. (No question to answer)
+
+3. (Created proc1.c)
+
+4. The line `j SUM` jumps to line 20 (where the SUM label is located). It executes the instruction `add $v0, $a0, $a1`, which adds the values in registers $a0 and $a1 and stores the result in $v0.
+
+5. We could technically use `j` with a label (e.g., `j MAIN_RETURN`) instead of `jr $ra`, but this hardcodes the return point. The procedure would only be able to return to that specific location, making it non-reusable.
+
+6. The return address is supposed to be saved at line 11. It is saved to register `$ra`. The value being saved is `0`. This value does not make sense because memory address 0 is not a valid text segment address for our program's instructions.
+
+7. The program throws an error or crashes because the CPU's program counter tries to fetch an instruction from the invalid memory address `0`.
+
+8. The instruction to return to from SUM is `addi $a0, $v0, 0`. Since `la` expands to two instructions, the address of this statement in the text segment is `0x00400020`.
+
+9. When changing the code to `addi $ra, $zero, 0x00400020`, the immediate value is too large for a 16-bit field. MARS assembler will expand it into pseudo-instructions (like `lui` and `ori`), which increases the length of the code before the return point. Thus, the address shifts by another instruction (4 bytes), making `0x00400020` incorrect!
+
+10. The new return address is `0x00400024`. After modifying, assembling, and running the code, the output of the program is `15`.
+
+11. Instead of using `j` to call a procedure and manually saving the return address, we should use the `jal` (Jump and Link) operator.
+
+12. (Modified proc1.s)
+
+TPS 2
+1. The output will be 38.
+
+2. MAIN loads the variables x and y into registers $s0 and $s1. It passes x as an argument via $a0 and calls SUM. After SUM returns, MAIN computes the sum of x, y, and the result of sum(x), then prints it.
+
+3. SUM knows where to return to because `jal SUM` automatically saves the return address in `$ra`. However, when SUM calls SUB using `jal SUB`, the `$ra` register is overwritten with the return address from SUB to SUM. As a result, SUM loses its original return address to MAIN. To resolve this, SUM must save `$ra` to the stack before calling SUB and restore it afterwards.
+
+4. The original `$a0` (which is the input argument `n`) is modified before calling SUB, but SUM still needs to use it later to add to the return value. To resolve this, we can save `$a0` to the stack at the beginning of SUM and restore it before we need to use it.
+
+5. The original value of `$s0` (which held `x` in MAIN) is overwritten with `m` inside SUM. This is a problem because MAIN expects `$s0` to still contain `x` when SUM returns so it can compute `x + y + sum(x)`. To fix this, SUM must save `$s0` to the stack before modifying it and restore it before returning.
+
+6. (Modified proc2.s)

@@ -1,0 +1,149 @@
+Name: Hongzhe Xie
+Course: CSE-031-01
+Lab 09: Machine Language
+
+Collaboration: worked individually
+
+===========================================================
+TPS 1
+===========================================================
+
+1. MIPS_Reference_Sheet downloaded/reviewed from CatCourses and used for
+   opcode, funct, register number, and instruction format lookup.
+
+2. proc1.s loaded/reviewed. The program reads an integer, compares it with
+   25, prints "Less than" if input < 25, and prints "Greater than or equal to"
+   otherwise.
+
+3. After assembly, the Text Segment shows:
+   - Source: the original source instructions.
+   - Basic: true/basic assembly after pseudo-instructions are expanded.
+   - Code: the 32-bit machine code for each basic instruction.
+
+4. Every MIPS machine instruction contains 32 bits.
+
+5. There are three main instruction formats:
+   - R-type: register format. Examples: add, sub, slt, jr.
+   - I-type: immediate format. Examples: addi, lw, sw, beq, bne.
+   - J-type: jump format. Examples: j, jal.
+
+6. proc1.s line #7:
+
+       addi $s0, $zero, 25
+
+   a. This is an I-type instruction. I-type has 4 fields:
+
+       opcode | rs | rt | immediate
+
+   b. Field values:
+
+       opcode    = 0x08   (addi)
+       rs        = $zero  = 0x00
+       rt        = $s0    = 0x10
+       immediate = 25     = 0x0019
+
+   c. Machine code:
+
+       binary = 001000 00000 10000 0000000000011001
+              = 00100000000100000000000000011001
+
+       hex    = 0x20100019
+
+7. Address 0x00400010 in proc1.s:
+
+   a. Machine code:
+
+       hex    = 0x0230402A
+       binary = 00000010001100000100000000101010
+
+   b. This is an R-type instruction because the opcode field is 0x00
+      (binary 000000). R-type has 6 fields:
+
+       opcode | rs | rt | rd | shamt | funct
+
+   c. Field values:
+
+       opcode = 0x00
+       rs     = 0x11
+       rt     = 0x10
+       rd     = 0x08
+       shamt  = 0x00
+       funct  = 0x2A
+
+   d. The funct value 0x2A means slt. Register mapping:
+
+       rs = 0x11 = $s1
+       rt = 0x10 = $s0
+       rd = 0x08 = $t0
+
+   e. Final MIPS instruction:
+
+       slt $t0, $s1, $s0
+
+      This is the same as the Source column instruction.
+
+8. proc1.s line #17:
+
+       bne $t0, $zero, LESS
+
+   a. This is an I-type instruction.
+
+   b. Field values:
+
+       opcode = 0x05   (bne)
+       rs     = $t0    = 0x08
+       rt     = $zero  = 0x00
+
+   c. The branch target label is LESS. Its address is 0x0040001C.
+
+   d. We do not put 0x0040001C directly into the immediate field. Branch
+      instructions use a signed PC-relative word offset, not an absolute
+      byte address.
+
+   e. The branch instruction is at 0x00400014. The next instruction is at
+      0x00400018, so:
+
+       immediate = (target - (PC + 4)) / 4
+                 = (0x0040001C - 0x00400018) / 4
+                 = 0x00000004 / 4
+                 = 1
+                 = 0x0001
+
+   f. Machine code:
+
+       binary = 000101 01000 00000 0000000000000001
+              = 00010101000000000000000000000001
+
+       hex    = 0x15000001
+
+      This matches the expected Code column value.
+
+9. proc1.s line #20:
+
+       j GREQ
+
+   a. This is a J-type instruction. J-type has 2 fields:
+
+       opcode | address
+
+   b. The opcode for j is 0x02.
+
+   c. It jumps to label GREQ at address 0x00400030.
+
+   d. The address field has 26 bits. Because MIPS instructions are word
+      aligned, the last two address bits are always 00, so the stored field is
+      the target address shifted right by 2. The upper 4 bits come from
+      PC + 4 during execution.
+
+       address field = 0x00400030 >> 2
+                     = 0x0010000C
+                     = 00000100000000000000001100
+
+   e. Machine code:
+
+       binary = 000010 00000100000000000000001100
+              = 00001000000100000000000000001100
+
+       hex    = 0x0810000C
+
+      This matches the expected Code column value.

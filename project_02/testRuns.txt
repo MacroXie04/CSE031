@@ -1,0 +1,123 @@
+=============================================================================
+TEST RUN 1 (Sample Run 1 from specification - basic valid inputs)
+=============================================================================
+Enter the number of assignments (between 1 and 25): 5
+Enter score: 2
+Enter score: 22
+Enter score: 11
+Enter score: 7
+Enter score: 19
+Original scores: 2 22 11 7 19
+Sorted scores (in descending order): 22 19 11 7 2
+Enter the number of (lowest) scores to drop: 2
+Average (rounded down) with dropped scores removed: 17
+-- program is finished running --
+
+=============================================================================
+TEST RUN 2 (Sample Run 2 - invalid numScores and drop == numScores)
+=============================================================================
+Enter the number of assignments (between 1 and 25): 0
+Enter the number of assignments (between 1 and 25): -3
+Enter the number of assignments (between 1 and 25): 26
+Enter the number of assignments (between 1 and 25): 5
+Enter score: 2
+Enter score: 22
+Enter score: 11
+Enter score: 7
+Enter score: 19
+Original scores: 2 22 11 7 19
+Sorted scores (in descending order): 22 19 11 7 2
+Enter the number of (lowest) scores to drop: -1
+Enter the number of (lowest) scores to drop: 6
+Enter the number of (lowest) scores to drop: 5
+All scores dropped!
+-- program is finished running --
+
+=============================================================================
+TEST RUN 3 (Single assignment, drop = 0)
+=============================================================================
+Enter the number of assignments (between 1 and 25): 1
+Enter score: 88
+Original scores: 88
+Sorted scores (in descending order): 88
+Enter the number of (lowest) scores to drop: 0
+Average (rounded down) with dropped scores removed: 88
+-- program is finished running --
+
+=============================================================================
+TEST RUN 4 (Maximum size = 25, drop = 0; includes negatives and duplicates)
+=============================================================================
+Enter the number of assignments (between 1 and 25): 25
+Enter score: 10
+Enter score: 20
+Enter score: 30
+Enter score: 40
+Enter score: 50
+Enter score: 60
+Enter score: 70
+Enter score: 80
+Enter score: 90
+Enter score: 100
+Enter score: 10
+Enter score: 20
+Enter score: 30
+Enter score: 40
+Enter score: 50
+Enter score: 60
+Enter score: 70
+Enter score: 80
+Enter score: 90
+Enter score: 100
+Enter score: -5
+Enter score: 0
+Enter score: 5
+Enter score: 55
+Enter score: 45
+Original scores: 10 20 30 40 50 60 70 80 90 100 10 20 30 40 50 60 70 80 90 100 -5 0 5 55 45
+Sorted scores (in descending order): 100 100 90 90 80 80 70 70 60 60 55 50 50 45 40 40 30 30 20 20 10 10 5 0 -5
+Enter the number of (lowest) scores to drop: 5
+Average (rounded down) with dropped scores removed: 59
+-- program is finished running --
+# (sum of top 20 sorted values = 100+100+90+90+80+80+70+70+60+60+55+50+50+45+40+40+30+30+20+20 = 1180; 1180/20 = 59)
+
+=============================================================================
+TEST RUN 5 (All same values, partial drop)
+=============================================================================
+Enter the number of assignments (between 1 and 25): 4
+Enter score: 50
+Enter score: 50
+Enter score: 50
+Enter score: 50
+Original scores: 50 50 50 50
+Sorted scores (in descending order): 50 50 50 50
+Enter the number of (lowest) scores to drop: 1
+Average (rounded down) with dropped scores removed: 50
+-- program is finished running --
+
+=============================================================================
+TEST RUN 6 (Already-sorted descending input, no drops)
+=============================================================================
+Enter the number of assignments (between 1 and 25): 5
+Enter score: 90
+Enter score: 80
+Enter score: 70
+Enter score: 60
+Enter score: 50
+Original scores: 90 80 70 60 50
+Sorted scores (in descending order): 90 80 70 60 50
+Enter the number of (lowest) scores to drop: 0
+Average (rounded down) with dropped scores removed: 70
+-- program is finished running --
+
+=============================================================================
+TEST RUN 7 (Average rounding down, drop all but one)
+=============================================================================
+Enter the number of assignments (between 1 and 25): 3
+Enter score: 7
+Enter score: 8
+Enter score: 10
+Original scores: 7 8 10
+Sorted scores (in descending order): 10 8 7
+Enter the number of (lowest) scores to drop: 2
+Average (rounded down) with dropped scores removed: 10
+-- program is finished running --
